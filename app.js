@@ -95,7 +95,7 @@ function scrapeAndAdd() {
       var dms = dom.window.document.getElementsByClassName("chart-list-item__title-text");
       var songs = [one];
       for (var i = 0; i < dms.length; i++) {
-        songs.push(dms[i].innerHTML.replace("\n", "").trim())
+        //songs.push(dms[i].innerHTML.replace("\n", "").trim())
       }
       addBulkSongs(songs)
     }
@@ -122,6 +122,7 @@ function searchAndAdd(song) {
 
     }).catch(
     function(err) {
+      console.log(err);
       console.error("Unable to find " + song);
     }
 
