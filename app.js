@@ -106,7 +106,7 @@ function searchAndAdd(song) {
   }).then(
     function(data) {
       const id = data.body.best_match.items[0].id;
-      spotifyApi.addToMySavedTracks(id).then(v => {
+      spotifyApi.addToMySavedTracks([id]).then(v => {
         console.log("Added song " + song);
       }).catch(err => {
         console.log("Unable to add " + song)
@@ -119,5 +119,5 @@ function searchAndAdd(song) {
 
   );
   console.log("Adding " + song + "Completed.");
-  sleep.sleep(2);
+  sleep.sleep(5);
 }
