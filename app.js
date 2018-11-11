@@ -118,6 +118,6 @@ function searchAndAdd(song) {
     }
 
   );
-  console.log("Adding " + song + "Completed.");
+  console.log("Adding " + song + " Completed.");
   sleep.sleep(5);
 }
