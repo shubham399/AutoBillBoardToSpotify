@@ -59,8 +59,8 @@ app.get('/callback', function(req, res) {
   })
 });
 
-console.log('Listening on 443');
-app.listen(443);
+console.log('Listening on '+ process.env.PORT);
+app.listen(process.env.PORT);
 
 function refresh() {
   try {
