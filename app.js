@@ -59,6 +59,14 @@ app.get('/callback', function(req, res) {
   })
 });
 
+app.all("/",function(req,res){
+  res.send("AutoBillBoard");
+});
+app.all('*', function(req, res){
+  res.send('what???', 404);
+});
+
+
 console.log('Listening on '+ process.env.PORT);
 app.listen(process.env.PORT);
 
