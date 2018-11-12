@@ -107,11 +107,19 @@ function scrapeAndAdd() {
   console.log("SCRAPPING ENDED.")
 }
 
+const currentLibIds = async(function(){
+  var list = await(spotifyApi.getMySavedTracks({limt:50}));
+  var ids = list.body.items.map(x=>x.id);
+  console.log(list.body);
+  return ids;
+  
+})
+
 const addBulkSongs = async(function (songs) {
   try{
   var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
-    var current = await(spotifyApi.getMySavedTracks());
-    console.log("CURRENT",JSON.stringify(current.body.items,true));
+    var current = await(getCurrentLibraryIds());
+    
     console.log("adding " +ids.length + " tracks");
     
     while(ids.length > 50){
