@@ -118,7 +118,7 @@ const currentLibIds = async(function(){
 const addBulkSongs = async(function (songs) {
   try{
   var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
-    var current = await(getCurrentLibraryIds());
+    var current = await(currentLibIds());
     
     console.log("adding " +ids.length + " tracks");
     
