@@ -78,7 +78,7 @@ function refresh() {
     spotifyApi.refreshAccessToken().then(
       function(data) {
         console.log('The access token has been refreshed!');
-        spotifyApi.resetAccessToken(data.body['access_token']);
+        spotifyApi.setAccessToken(data.body['access_token']);
       },
       function(err) {
         console.log('Could not refresh access token', err);
