@@ -108,7 +108,7 @@ function scrapeAndAdd() {
 }
 
 const addBulkSongs = async(function (songs) {
-  var ids = songs.map(x=>{sleep.sleep(5);search(x)});
+  var ids = songs.map(x=>{sleep.sleep(1);search(x)});
     console.log("adding " +ids+ "Saved tracks");
     while(ids.length > 50){
       var i = ids.slice(0,50);
