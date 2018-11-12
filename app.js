@@ -110,7 +110,8 @@ function scrapeAndAdd() {
 const addBulkSongs = async(function (songs) {
   try{
   var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
-  
+    var current = await(spotifyApi.getMySavedTracks());
+    console.log("CURRENT",current);
     console.log("adding " +ids.length + " tracks");
     
     while(ids.length > 50){
