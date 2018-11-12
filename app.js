@@ -119,7 +119,6 @@ const currentLibIds = async(function(){
     ids = ids.concat(nIds);
   }
   
-  console.log(list.body);
   return ids;
   
 })
@@ -128,6 +127,8 @@ const addBulkSongs = async(function (songs) {
   try{
   var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
     var current = await(currentLibIds());
+    console.log("Already Added ",current);
+    
     
     console.log("adding " +ids.length + " tracks");
     
