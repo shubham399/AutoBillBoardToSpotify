@@ -106,11 +106,21 @@ function scrapeAndAdd() {
   console.log("SCRAPPING ENDED.")
 }
 
-function addBulkSongs(songs) {
-  songs.map(searchAndAdd)
-}
+const addBulkSongs = async(function (songs) {
+  var ids = songs.map(x=>{
+    sleep.sleep(5);
+    searchAndAdd(x)});
+    console.log("adding to  Saved tracks");
+    while(ids.length > 50){
+      var i = ids.slice(0,50);
+    var added = await(spotifyApi.addToMySavedTracks(i));
+      ids = ids.slice(50);
+    }
+  var added = await(spotifyApi.addToMySavedTracks(ids));
+});
+  
 
-const searchAndAdd = async(function (song) {
+const search = async(function (song) {
   console.log("Adding " + song);
 try{
   var data = await(spotifyApi.search(song, ["track"], {
@@ -118,8 +128,8 @@ try{
   }));
   var id = data.body.best_match.items[0].id;
   console.log(id);
-  console.log("adding to  Saved tracks");
-  var added = await(spotifyApi.addToMySavedTracks([id]));
+  
+  return id;
   
 }
 catch(err)
@@ -127,5 +137,5 @@ catch(err)
    console.log("Error while Adding Song"+err);
 }
   console.log("Added  " + song + " Completed.");
-  sleep.sleep(5);
+  
 })
