@@ -122,9 +122,7 @@ const currentLibIds = async(function(){
     limit : 50,
     offset: i
   }));
-    console.log(l.body)
     var nIds = l.body.items.map(x=>x.track.id);
-    console.log(nIds)
     ids = ids.concat(nIds);
   }
   
@@ -137,7 +135,9 @@ const addBulkSongs = async(function (songs) {
   var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
     var current = await(currentLibIds());
     console.log("Already Added "+current.length);
-    
+    ids = ids.filter( function( el ) {
+  return current.indexOf( el ) < 0;
+} );
     
     console.log("adding " +ids.length + " tracks");
     
