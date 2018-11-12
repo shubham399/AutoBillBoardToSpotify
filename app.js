@@ -120,12 +120,13 @@ const addBulkSongs = async(function (songs) {
   
 
 const search = async(function (song) {
-  console.log("Adding " + song);
+  console.log("Searching id : " + song);
 try{
   var data = await(spotifyApi.search(song, ["track"], {
     best_match: true
   }));
   var id = data.body.best_match.items[0].id;
+  console.log(song+" id is "+ id);
   return id;
   
 }
