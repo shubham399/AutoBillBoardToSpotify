@@ -108,13 +108,16 @@ function scrapeAndAdd() {
 }
 
 const addBulkSongs = async(function (songs) {
-  var ids = songs.map(x=>await(search(x)));
+  var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
   
     console.log("adding " +ids+ "Saved tracks");
     while(ids.length > 50){
+      console.log("Adding Songs List"+ ids.length);
       var i = ids.slice(0,50);
+      console.log(i);
     var added = await(spotifyApi.addToMySavedTracks(i));
-      ids = ids.slice(50);
+      ids = ids.slice(51,ids.length);
+      console.log(ids);
     }
   var added = await(spotifyApi.addToMySavedTracks(ids));
 });
