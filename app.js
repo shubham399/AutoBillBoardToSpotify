@@ -110,7 +110,7 @@ function addBulkSongs(songs) {
   songs.map(searchAndAdd)
 }
 
-async(function searchAndAdd(song) {
+const searchAndAdd = async(function (song) {
   console.log("Adding " + song);
 try{
   var data = await(spotifyApi.search(song, ["track"], {
