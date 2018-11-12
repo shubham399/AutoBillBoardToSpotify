@@ -118,12 +118,9 @@ try{
   }));
   var id = data.body.best_match.items[0].id;
   console.log(id);
-  console.log("getting Saved tracks");
-  var d = await(spotifyApi.containsMySavedTracks([id]));
-  console.log(d);
   console.log("adding to  Saved tracks");
   var added = await(spotifyApi.addToMySavedTracks([id]));
-  console.log(added);
+  
 }
 catch(err)
 {
