@@ -98,7 +98,7 @@ function scrapeAndAdd() {
       var dms = dom.window.document.getElementsByClassName("chart-list-item__title-text");
       var songs = [one];
       for (var i = 0; i < dms.length; i++) {
-        //songs.push(dms[i].innerHTML.replace("\n", "").trim())
+        songs.push(dms[i].innerHTML.replace("\n", "").trim())
       }
       addBulkSongs(songs)
     }
@@ -126,24 +126,6 @@ catch(err)
 {
    console.log("Error while Adding Song"+err);
 }
- // spotifyApi.search(song, ["track"], {
- //   best_match: true
-  //}).then(
-    //function(data) {
-      //const id = data.body.best_match.items[0].id;
-      //spotifyApi.addToMySavedTracks([id]).then(v => {
-       // console.log("Added song " + song);
-      //}).catch(err => {
-//         console.log("Unable to add " + song)
-//       })
-
-//     }).catch(
-//     function(err) {
-//       console.log(err);
-//       console.error("Unable to find " + song);
-//     }
-
-//   );
   console.log("Added  " + song + " Completed.");
   sleep.sleep(5);
 })
