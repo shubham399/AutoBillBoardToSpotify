@@ -108,9 +108,7 @@ function scrapeAndAdd() {
 }
 
 const addBulkSongs = async(function (songs) {
-  var ids = songs.map(x=>{
-    sleep.sleep(5);
-    searchAndAdd(x)});
+  var ids = songs.map(searchAndAdd);
     console.log("adding " +ids+ "Saved tracks");
     while(ids.length > 50){
       var i = ids.slice(0,50);
@@ -128,15 +126,14 @@ try{
     best_match: true
   }));
   var id = data.body.best_match.items[0].id;
-  console.log(id);
-  
   return id;
   
 }
 catch(err)
 {
-   console.log("Error while Adding Song"+err);
+   console.log("Error while Searching Song"+err);
+  return null;
 }
-  console.log("Added  " + song + " Completed.");
+  
   
 })
