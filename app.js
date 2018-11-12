@@ -31,7 +31,8 @@ app.get("/start", async(function(req, res) {
     var data = await(spotifyApi.getMe());
      console.log(data.body);
      sleep.sleep(1);
-     scrapeAndAdd();
+     await(scrapeAndAdd());
+     refresh();     
      res.send(data.body);
      }
     catch(err)
@@ -110,7 +111,7 @@ const addBulkSongs = async(function (songs) {
   var ids = songs.map(x=>{
     sleep.sleep(5);
     searchAndAdd(x)});
-    console.log("adding to  Saved tracks");
+    console.log("adding " +ids+ "Saved tracks");
     while(ids.length > 50){
       var i = ids.slice(0,50);
     var added = await(spotifyApi.addToMySavedTracks(i));
