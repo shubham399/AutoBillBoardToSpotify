@@ -111,7 +111,7 @@ const currentLibIds = async(function(){
   var list = await(spotifyApi.getMySavedTracks({
     limit : 50
   }));
-  var ids = list.body.items.map(x=>x.id);
+  var ids = list.body.items.map(x=>x.track.id);
   var total = list.body.total;
   console.log("TOTAL:"+total);
   
@@ -123,7 +123,7 @@ const currentLibIds = async(function(){
     offset: i
   }));
     console.log(l.body)
-    var nIds = l.body.items.map(x=>x.id);
+    var nIds = l.body.items.map(x=>x.track.id);
     console.log(nIds)
     ids = ids.concat(nIds);
   }
