@@ -110,26 +110,37 @@ function addBulkSongs(songs) {
   songs.map(searchAndAdd)
 }
 
-function searchAndAdd(song) {
+function async(searchAndAdd(song) {
   console.log("Adding " + song);
-  spotifyApi.search(song, ["track"], {
+try{
+  var data = await(spotifyApi.search(song, ["track"], {
     best_match: true
-  }).then(
-    function(data) {
-      const id = data.body.best_match.items[0].id;
-      spotifyApi.addToMySavedTracks([id]).then(v => {
-        console.log("Added song " + song);
-      }).catch(err => {
-        console.log("Unable to add " + song)
-      })
-
-    }).catch(
-    function(err) {
-      console.log(err);
-      console.error("Unable to find " + song);
-    }
-
-  );
-  console.log("Adding " + song + " Completed.");
-  sleep.sleep(5);
+  }));
+  var id = data.body.best_match.items[0].id;
+  var added = await(spotifyApi.addToMySavedTracks([id]));
 }
+catch(err)
+{
+   console.log("Error while Adding Song");
+}
+ // spotifyApi.search(song, ["track"], {
+ //   best_match: true
+  //}).then(
+    //function(data) {
+      //const id = data.body.best_match.items[0].id;
+      //spotifyApi.addToMySavedTracks([id]).then(v => {
+       // console.log("Added song " + song);
+      //}).catch(err => {
+//         console.log("Unable to add " + song)
+//       })
+
+//     }).catch(
+//     function(err) {
+//       console.log(err);
+//       console.error("Unable to find " + song);
+//     }
+
+//   );
+  console.log("Added  " + song + " Completed.");
+  sleep.sleep(5);
+})
