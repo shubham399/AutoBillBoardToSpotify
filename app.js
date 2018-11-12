@@ -117,6 +117,7 @@ const currentLibIds = async(function(){
   {
     console.log("Count: " +(i/50));
     var l = await(spotifyApi.getMySavedTracks({offset:i,limt:50}));
+    console.log(l.body)
     var nIds = l.body.items.map(x=>x.id);
     console.log(nIds)
     ids = ids.concat(nIds);
