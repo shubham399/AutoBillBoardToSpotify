@@ -108,9 +108,11 @@ function scrapeAndAdd() {
 }
 
 const addBulkSongs = async(function (songs) {
+  try{
   var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
   
     console.log("adding " +ids+ "Saved tracks");
+    
     while(ids.length > 50){
       console.log("Adding Songs List"+ ids.length);
       var i = ids.slice(0,50);
@@ -119,7 +121,13 @@ const addBulkSongs = async(function (songs) {
       ids = ids.slice(51,ids.length);
       console.log(ids);
     }
+    console.log("yaha aaya");
   var added = await(spotifyApi.addToMySavedTracks(ids));
+  }
+  catch(err)
+  {
+    console.log("Error in Bulk Add"+ err);
+  }
 });
   
 
