@@ -29,7 +29,7 @@ app.get("/start", function(req, res) {
   else {
     spotifyApi.getMe()
       .then(function(data) {
-        refresh();
+        //refresh();
         scrapeAndAdd()
         // searchAndAdd('sex Eden')
         // console.log('Some information about the authenticated user', data.body);
