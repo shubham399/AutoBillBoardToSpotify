@@ -108,7 +108,9 @@ function scrapeAndAdd() {
 }
 
 const currentLibIds = async(function(){
-  var list = await(spotifyApi.getMySavedTracks({offset:0,limt:50}));
+  var list = await(spotifyApi.getMySavedTracks({
+    limit : 50
+  }));
   var ids = list.body.items.map(x=>x.id);
   var total = list.body.total;
   console.log("TOTAL:"+total);
@@ -116,7 +118,10 @@ const currentLibIds = async(function(){
   for(var i = 50; i<(total+50);i+=50)
   {
     console.log("Count: " +(i/50));
-    var l = await(spotifyApi.getMySavedTracks({offset:i,limt:50}));
+    var l = await(spotifyApi.getMySavedTracks({
+    limit : 50,
+    offset: i
+  }));
     console.log(l.body)
     var nIds = l.body.items.map(x=>x.id);
     console.log(nIds)
