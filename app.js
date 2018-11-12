@@ -1,3 +1,5 @@
+const async = require("asyncawait/async");
+const await = require("asyncawait/await");
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var querystring = require('querystring');
@@ -6,6 +8,7 @@ var state = 'spotify_auth_state';
 var sleep = require('sleep');
 var code = null;
 var app = express();
+
 var jsdom = require("jsdom");
 const {
   JSDOM
