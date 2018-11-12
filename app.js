@@ -121,7 +121,7 @@ try{
 }
 catch(err)
 {
-   console.log("Error while Adding Song");
+   console.log("Error while Adding Song"+err);
 }
  // spotifyApi.search(song, ["track"], {
  //   best_match: true
