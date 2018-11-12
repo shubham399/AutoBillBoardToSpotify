@@ -15,7 +15,7 @@ const {
 } = jsdom;
 
 // app.use(cors())
-var scopes = []//["user-library-modify","user-read-email","playlist-modify-private"]
+var scopes = ["user-library-modify","user-read-private","user-library-read","user-read-email","playlist-modify-private"]
 var spotifyApi = new SpotifyWebApi({
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
