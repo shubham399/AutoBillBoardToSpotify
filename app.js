@@ -116,7 +116,6 @@ try{
   var data = await(spotifyApi.search(song, ["track"], {
     best_match: true
   }));
-  console.log(data);
   var id = data.body.best_match.items[0].id;
   console.log(id);
   var added = await(spotifyApi.addToMySavedTracks([id]));
