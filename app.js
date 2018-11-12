@@ -113,7 +113,7 @@ const currentLibIds = async(function(){
   var total = list.body.total;
   console.log("TOTAL:"+total);
   
-  for(var i = 50; i<=(total+50);i+=50)
+  for(var i = 50; i<(total+50);i+=50)
   {
     console.log("Count: " +(i/50));
     var l = await(spotifyApi.getMySavedTracks({offset:i,limt:50}));
