@@ -21,26 +21,26 @@ var spotifyApi = new SpotifyWebApi({
   clientSecret: process.env.CLIENT_SECRET,
   redirectUri: process.env.APP_URI + "/callback"
 });
-app.get("/start", function(req, res) {
+app.get("/start", async(function(req, res) {
   console.log("Start API called.");
   var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
   if (code == null)
     res.redirect(authorizeURL);
   else {
-    spotifyApi.getMe()
-      .then(function(data) {
-        //refresh();
-        scrapeAndAdd()
-        // searchAndAdd('sex Eden')
-        // console.log('Some information about the authenticated user', data.body);
-        res.send(data.body)
-
-      }, function(err) {
-        console.log("ERROR at getUser:", err);
+     try{
+    var data = await(spotifyApi.getMe());
+     console.log(data.body);
+     sleep.sleep(1);
+     scrapeAndAdd();
+     res.send(data.body);
+     }
+    catch(err)
+    {
+       console.log("ERROR at getUser:", err);
         res.redirect(authorizeURL);
-      });
+    }
   }
-})
+}))
 
 
 // console.log(authorizeURL);
