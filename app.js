@@ -140,7 +140,7 @@ const addBulkSongs = async(function (songs) {
 } );
     
     console.log("adding " +ids.length + " tracks");
-    
+    if(ids.length>0){
     while(ids.length > 50){
     var i = ids.slice(0,50);
     var added = await(spotifyApi.addToMySavedTracks(i));
@@ -148,7 +148,8 @@ const addBulkSongs = async(function (songs) {
       }
   var added = await(spotifyApi.addToMySavedTracks(ids));
    console.log("Added  Tracks.");
-  }
+  
+      }}
   catch(err)
   {
     console.log("Error in Bulk Add"+ err);
