@@ -132,9 +132,9 @@ const currentLibIds = async(function(){
 const addBulkSongs = async(function (songs) {
   try{
      var date = new Date().toDateString();
-   var playlist = await(spotifyApi.createPlaylist(date,{ 'public' : false }));
-   console.log(playlist);
-   console.log(playlist.id);
+   spotifyApi.createPlaylist(date,{ 'public' : false }).then((data) => console.log(data)).catch((err) => console.log("CreatePalylist"+err));
+//    console.log(playlist);
+//    console.log(playlist.id);
       
   var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
     var current = await(currentLibIds());
