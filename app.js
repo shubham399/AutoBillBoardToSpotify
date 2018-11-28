@@ -89,7 +89,7 @@ function refresh() {
   } catch (err) {}
 }
 
-const scrapeAndAdd =async(function() {
+const scrapeAndAdd =function() {
   console.log("SCRAPPING Started.")
   request('https://www.billboard.com/charts/hot-100', function(error, response, body) {
     console.log('error:', error); // Print the error if one occurred
@@ -102,16 +102,11 @@ const scrapeAndAdd =async(function() {
         songs.push(dms[i].innerHTML.replace("\n", "").trim())
       }
       var date = new Date().toDateString();
-
-      var playlist = await(spotifyApi.createPlaylist(date,{ 'public' : false }));
-      console.log(playlist);
-      console.log(playlist.id);
-      
       addBulkSongs(songs)
     }
   });
   console.log("SCRAPPING ENDED.")
-});
+};
 
 const currentLibIds = async(function(){
   var list = await(spotifyApi.getMySavedTracks({
@@ -137,6 +132,10 @@ const currentLibIds = async(function(){
 
 const addBulkSongs = async(function (songs) {
   try{
+   var playlist = await(spotifyApi.createPlaylist(date,{ 'public' : false }));
+   console.log(playlist);
+   console.log(playlist.id);
+      
   var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
     var current = await(currentLibIds());
     console.log("Already Added "+current.length);
