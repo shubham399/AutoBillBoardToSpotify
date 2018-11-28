@@ -89,7 +89,7 @@ function refresh() {
   } catch (err) {}
 }
 
-function scrapeAndAdd =async(function() {
+const scrapeAndAdd =async(function() {
   console.log("SCRAPPING Started.")
   request('https://www.billboard.com/charts/hot-100', function(error, response, body) {
     console.log('error:', error); // Print the error if one occurred
