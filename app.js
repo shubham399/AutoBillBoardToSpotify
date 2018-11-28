@@ -103,8 +103,10 @@ const scrapeAndAdd =async(function() {
       }
       var date = new Date().toDateString();
 
-      var playlist = await(spotifyApi.createPlaylist(date,{ 'public' : false })
+      var playlist = await(spotifyApi.createPlaylist(date,{ 'public' : false }));
+      console.log(playlist);
       console.log(playlist.id);
+      
       addBulkSongs(songs)
     }
   });
@@ -121,7 +123,6 @@ const currentLibIds = async(function(){
   
   for(var i = 50; i<(total+50);i+=50)
   {
-    console.log("Count: " +(i/50));
     var l = await(spotifyApi.getMySavedTracks({
     limit : 50,
     offset: i
