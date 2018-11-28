@@ -101,7 +101,6 @@ const scrapeAndAdd =function() {
       for (var i = 0; i < dms.length; i++) {
         songs.push(dms[i].innerHTML.replace("\n", "").trim())
       }
-      var date = new Date().toDateString();
       addBulkSongs(songs)
     }
   });
@@ -132,6 +131,7 @@ const currentLibIds = async(function(){
 
 const addBulkSongs = async(function (songs) {
   try{
+     var date = new Date().toDateString();
    var playlist = await(spotifyApi.createPlaylist(date,{ 'public' : false }));
    console.log(playlist);
    console.log(playlist.id);
