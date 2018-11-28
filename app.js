@@ -15,7 +15,7 @@ const {
 } = jsdom;
 
 // app.use(cors())
-var scopes = ["user-library-modify","user-read-private","user-library-read","user-read-email","playlist-modify-private"]
+var scopes = ["user-library-modify","user-read-private","playlist-modify-private","user-library-read","user-read-email","playlist-modify-private"]
 var spotifyApi = new SpotifyWebApi({
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
@@ -89,7 +89,7 @@ function refresh() {
   } catch (err) {}
 }
 
-function scrapeAndAdd() {
+function scrapeAndAdd =async(function() {
   console.log("SCRAPPING Started.")
   request('https://www.billboard.com/charts/hot-100', function(error, response, body) {
     console.log('error:', error); // Print the error if one occurred
@@ -101,11 +101,15 @@ function scrapeAndAdd() {
       for (var i = 0; i < dms.length; i++) {
         songs.push(dms[i].innerHTML.replace("\n", "").trim())
       }
+      var date = new Date().toDateString();
+
+      var playlist = await(spotifyApi.createPlaylist(date,{ 'public' : false })
+      console.log(playlist.id);
       addBulkSongs(songs)
     }
   });
   console.log("SCRAPPING ENDED.")
-}
+});
 
 const currentLibIds = async(function(){
   var list = await(spotifyApi.getMySavedTracks({
