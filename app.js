@@ -25,7 +25,7 @@ app.get("/me",async(function(req,res){
 try{
   var data = await(spotifyApi.getMe());
   var id = data.body.id;
-  var playlist = await(spotifyApi.createPlaylist("Test Playlist",{ 'public' : false }));
+  var playlist = await(spotifyApi.createPlaylist(id,"Test Playlist",{ 'public' : false }));
   res.send(playlist);
 }
 catch(e){
