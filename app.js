@@ -21,6 +21,17 @@ var spotifyApi = new SpotifyWebApi({
   clientSecret: process.env.CLIENT_SECRET,
   redirectUri: process.env.APP_URI + "/callback"
 });
+app.get("/me",async(function(req,res){
+try{
+  var data = await(spotifyApi.getMe());
+  var id = data.body.id;
+  var playlist = await(spotifyApi.getUserPlaylists(id));
+  res.send(playlist);
+}
+catch(e){
+  res.send(e);
+}
+}));
 app.get("/start", async(function(req, res) {
   console.log("Start API called.");
   var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
