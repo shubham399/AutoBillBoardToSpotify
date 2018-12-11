@@ -19,6 +19,6 @@
     "querystring": "~0.2.0",
     "request": "~2.83.0",
     "sleep": "^5.2.3",
-    "spotify-web-api-node": "https://github.com/shubham399/spotify-web-api-node.git#master"
+    "spotify-web-api-node": "https://github.com/shubham399/spotify-web-api-node.git#b6b8f4ad071ef3efd2bcc7170439ce7e1232cd92"
   }
 }
