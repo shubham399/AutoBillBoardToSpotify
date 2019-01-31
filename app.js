@@ -137,8 +137,9 @@ const addBulkSongs = async (function(songs) {
     // spotifyApi.createPlaylist(date,{ 'public' : false }).then((data) => console.log(data)).catch((err) => console.log("CreatePalylist"+err));
     console.log(playlist);
     console.log(playlist.id);
-    var ids = songs.map(x => await (search(x)));
-    console.log(ids);
+    var ids = songs.map(x => await (search(x))).filter(y => y != null).map(x => ("spotify:track:" + x));
+    var addedSongs = await (spotifyApi.addTracksToPlaylist(playlist.id, ids));
+    console.log(addedSongs);
     // //   var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
     // //     var current = await(currentLibIds());
     // //     console.log("Already Added "+current.length);
