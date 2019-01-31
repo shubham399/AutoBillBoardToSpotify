@@ -8,6 +8,7 @@ var state = 'spotify_auth_state';
 var sleep = require('sleep');
 var code = null;
 var app = express();
+var port = process.env.PORT | 3001
 
 var jsdom = require("jsdom");
 const {
@@ -69,8 +70,8 @@ app.all('*', function(req, res) {
 });
 
 
-console.log('Listening on ' + process.env.PORT);
-app.listen(process.env.PORT);
+console.log('Listening on ' + port);
+app.listen(port);
 
 function refresh() {
   try {
@@ -131,32 +132,12 @@ const addBulkSongs = async (function(songs) {
     var date = new Date().toDateString();
     var data = await (spotifyApi.getMe());
     var id = data.body.id;
-    var playlist = await (spotifyApi.createPlaylist(id, date, {
+    var playlist = await (spotifyApi.createPlaylist(id, "Billboard TOP 100 on " + date, {
       'public': false
     }));
-    // spotifyApi.createPlaylist(date,{ 'public' : false }).then((data) => console.log(data)).catch((err) => console.log("CreatePalylist"+err));
-    console.log(playlist);
-    console.log(playlist.id);
     var ids = songs.map(x => await (search(x))).filter(y => y != null).map(x => ("spotify:track:" + x));
-    var addedSongs = await (spotifyApi.addTracksToPlaylist(id, playlist.id, ids));
+    var addedSongs = await (spotifyApi.addTracksToPlaylist(playlist.body.id, ids));
     console.log(addedSongs);
-    // //   var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
-    // //     var current = await(currentLibIds());
-    // //     console.log("Already Added "+current.length);
-    // //     ids = ids.filter( function( el ) {
-    // //   return current.indexOf( el ) < 0;
-    // // } );
-
-    //     console.log("adding " +ids.length + " tracks");
-    //     if(ids.length>0){
-    //     while(ids.length > 50){
-    //     var i = ids.slice(0,50);
-    //     var added = await(spotifyApi.addToMySavedTracks(i));
-    //       ids = ids.slice(51,ids.length);
-    //       }
-    //   var added = await(spotifyApi.addToMySavedTracks(ids));
-    //    console.log("Added  Tracks.");
-
   } catch (err) {
     console.log("Error in Bulk Add" + err);
   }
