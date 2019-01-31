@@ -8,6 +8,7 @@ var state = 'spotify_auth_state';
 var sleep = require('sleep');
 var code = null;
 var app = express();
+var port = process.env.PORT | 3001
 
 var jsdom = require("jsdom");
 const {
@@ -15,41 +16,36 @@ const {
 } = jsdom;
 
 // app.use(cors())
-var scopes = ["user-library-modify","user-read-private","user-library-read","user-read-email","playlist-modify-private"]
+var scopes = ["user-library-modify", "user-read-private", "playlist-modify-private", "user-library-read", "user-read-email", "playlist-modify-private"]
 var spotifyApi = new SpotifyWebApi({
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
   redirectUri: process.env.APP_URI + "/callback"
 });
-app.get("/me",async(function(req,res){
-try{
-  var data = await(spotifyApi.getMe());
-  var id = data.body.id;
-  var playlist = await(spotifyApi.createPlaylist(id,"Test Playlist",{ 'public' : false }));
-  res.send(playlist);
-}
-catch(e){
-  res.send(e);
-}
+app.get("/me", async (function(req, res) {
+  try {
+    var data = await (spotifyApi.getMe());
+    res.send(data);
+  } catch (e) {
+    res.send(e);
+  }
 }));
-app.get("/start", async(function(req, res) {
+app.get("/start", async (function(req, res) {
   console.log("Start API called.");
   var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
   if (code == null)
     res.redirect(authorizeURL);
   else {
-     try{
-    var data = await(spotifyApi.getMe());
-     console.log(data.body);
-     sleep.sleep(1);
-     await(scrapeAndAdd());
-     refresh();     
-     res.send(data.body);
-     }
-    catch(err)
-    {
-       console.log("ERROR at getUser:", err);
-        res.redirect(authorizeURL);
+    try {
+      var data = await (spotifyApi.getMe());
+      console.log(data.body);
+      sleep.sleep(1);
+      await (scrapeAndAdd());
+      refresh();
+      res.send(data.body);
+    } catch (err) {
+      console.log("ERROR at getUser:", err);
+      res.redirect(authorizeURL);
     }
   }
 }))
@@ -74,16 +70,16 @@ app.get('/callback', function(req, res) {
   })
 });
 
-app.all("/",function(req,res){
+app.all("/", function(req, res) {
   res.send("AutoBillBoard");
 });
-app.all('*', function(req, res){
+app.all('*', function(req, res) {
   res.send('what???', 404);
 });
 
 
-console.log('Listening on '+ process.env.PORT);
-app.listen(process.env.PORT);
+console.log('Listening on ' + port);
+app.listen(port);
 
 function refresh() {
   try {
@@ -100,7 +96,7 @@ function refresh() {
   } catch (err) {}
 }
 
-function scrapeAndAdd() {
+const scrapeAndAdd = function() {
   console.log("SCRAPPING Started.")
   request('https://www.billboard.com/charts/hot-100', function(error, response, body) {
     console.log('error:', error); // Print the error if one occurred
@@ -116,74 +112,60 @@ function scrapeAndAdd() {
     }
   });
   console.log("SCRAPPING ENDED.")
-}
+};
 
-const currentLibIds = async(function(){
-  var list = await(spotifyApi.getMySavedTracks({
-    limit : 50
+const currentLibIds = async (function() {
+  var list = await (spotifyApi.getMySavedTracks({
+    limit: 50
   }));
-  var ids = list.body.items.map(x=>x.track.id);
+  var ids = list.body.items.map(x => x.track.id);
   var total = list.body.total;
-  console.log("TOTAL:"+total);
-  
-  for(var i = 50; i<(total+50);i+=50)
-  {
-    console.log("Count: " +(i/50));
-    var l = await(spotifyApi.getMySavedTracks({
-    limit : 50,
-    offset: i
-  }));
-    var nIds = l.body.items.map(x=>x.track.id);
+  console.log("TOTAL:" + total);
+
+  for (var i = 50; i < (total + 50); i += 50) {
+    var l = await (spotifyApi.getMySavedTracks({
+      limit: 50,
+      offset: i
+    }));
+    var nIds = l.body.items.map(x => x.track.id);
     ids = ids.concat(nIds);
   }
-  
+
   return ids;
-  
+
 })
 
-const addBulkSongs = async(function (songs) {
-  try{
-  var ids = songs.map(x=>await(search(x))).filter(y=>y!=null);
-    var current = await(currentLibIds());
-    console.log("Already Added "+current.length);
-    ids = ids.filter( function( el ) {
-  return current.indexOf( el ) < 0;
-} );
-    
-    console.log("adding " +ids.length + " tracks");
-    if(ids.length>0){
-    while(ids.length > 50){
-    var i = ids.slice(0,50);
-    var added = await(spotifyApi.addToMySavedTracks(i));
-      ids = ids.slice(51,ids.length);
-      }
-  var added = await(spotifyApi.addToMySavedTracks(ids));
-   console.log("Added  Tracks.");
-  
-      }}
-  catch(err)
-  {
-    console.log("Error in Bulk Add"+ err);
+const addBulkSongs = async (function(songs) {
+  try {
+    var date = new Date().toDateString();
+    var data = await (spotifyApi.getMe());
+    var id = data.body.id;
+    var playlist = await (spotifyApi.createPlaylist(id, "Billboard TOP 100 on " + date, {
+      'public': false
+    }));
+    var ids = songs.map(x => await (search(x))).filter(y => y != null).map(x => ("spotify:track:" + x));
+    var addedSongs = await (spotifyApi.addTracksToPlaylist(playlist.body.id, ids));
+    console.log(addedSongs);
+  } catch (err) {
+    console.log("Error in Bulk Add" + err);
   }
 });
-  
 
-const search = async(function (song) {
+
+const search = async (function(song) {
   console.log("Searching id : " + song);
-try{
-  var data = await(spotifyApi.search(song, ["track"], {
-    best_match: true
-  }));
-  var id = data.body.best_match.items[0].id;
-  console.log(song+" id is "+ id);
-  return id;
-  
-}
-catch(err)
-{
-   console.log("Error while Searching Song"+err);
-  return null;
-}
-  
-  
+  try {
+    var data = await (spotifyApi.search(song, ["track"], {
+      best_match: true
+    }));
+    var id = data.body.best_match.items[0].id;
+    console.log(song + " id is " + id);
+    return id;
+
+  } catch (err) {
+    console.log("Error while Searching Song" + err);
+    return null;
+  }
+
+
 })
