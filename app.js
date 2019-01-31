@@ -8,7 +8,7 @@ var state = 'spotify_auth_state';
 var sleep = require('sleep');
 var code = null;
 var app = express();
-var port = process.env.PORT | 3001
+var port = process.env.PORT
 
 var jsdom = require("jsdom");
 const {
