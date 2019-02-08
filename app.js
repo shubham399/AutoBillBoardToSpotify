@@ -39,6 +39,7 @@ app.get("/start", async (function(req, res) {
   else {
           if(takeReq){
     try {
+      console.log("Setting TakeReq to false");
       takeReq=false;
       var data = await (spotifyApi.getMe());
       console.log(data.body);
@@ -157,9 +158,14 @@ const addBulkSongs = async (function(songs) {
     spotifyApi.resetRefreshToken();
     spotifyApi.setAccessToken(null);
     spotifyApi.setRefreshToken(null);
+    console.log("Stetting takeReq to true");
     takeReq = true;
+    console.log("Take Req=",takeReq);
   } catch (err) {
     console.log("Error in Bulk Add" + err);
+    console.log("Stetting takeReq to true");
+    takeReq = true;
+    console.log("Take Req=",takeReq);
   }
 });
 
