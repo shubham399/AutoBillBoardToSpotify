@@ -42,6 +42,8 @@ app.get("/start", async (function(req, res) {
       sleep.sleep(1);
       await (scrapeAndAdd());
       refresh();
+      spotifyApi.setAccessToken(null);
+      spotifyApi.setRefreshToken(null);
       res.send(data.body);
     } catch (err) {
       console.log("ERROR at getUser:", err);
