@@ -9,7 +9,13 @@ var sleep = require('sleep');
 var code = null;
 var app = express();
 var port = process.env.PORT;
-var takeReq = true;
+
+function isAllowed(){
+  var takeReq = true;
+  function get(){
+   return this.takeReq;
+  }
+}
 
 var jsdom = require("jsdom");
 const {
