@@ -147,6 +147,8 @@ const addBulkSongs = async (function(songs) {
     console.log(addedSongs);
     spotifyApi.resetAccessToken();
     spotifyApi.resetRefreshToken();
+    spotifyApi.setAccessToken(null);
+    spotifyApi.setRefreshToken(null);
   } catch (err) {
     console.log("Error in Bulk Add" + err);
   }
