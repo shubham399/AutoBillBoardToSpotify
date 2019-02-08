@@ -8,7 +8,8 @@ var state = 'spotify_auth_state';
 var sleep = require('sleep');
 var code = null;
 var app = express();
-var port = process.env.PORT
+var port = process.env.PORT;
+var takeReq = true;
 
 var jsdom = require("jsdom");
 const {
@@ -37,6 +38,8 @@ app.get("/start", async (function(req, res) {
     res.redirect(authorizeURL);
   else {
     try {
+      if(takeReq){
+      takeReq=false;
       var data = await (spotifyApi.getMe());
       console.log(data.body);
       sleep.sleep(1);
@@ -45,6 +48,11 @@ app.get("/start", async (function(req, res) {
     } catch (err) {
       console.log("ERROR at getUser:", err);
       res.redirect(authorizeURL);
+    }
+    }
+    else
+    {
+      res.send("Proccessing Job.Please try after sometime");
     }
   }
 }))
@@ -149,6 +157,7 @@ const addBulkSongs = async (function(songs) {
     spotifyApi.resetRefreshToken();
     spotifyApi.setAccessToken(null);
     spotifyApi.setRefreshToken(null);
+    takeReq = true;
   } catch (err) {
     console.log("Error in Bulk Add" + err);
   }
