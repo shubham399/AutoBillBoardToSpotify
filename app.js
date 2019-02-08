@@ -41,10 +41,6 @@ app.get("/start", async (function(req, res) {
       console.log(data.body);
       sleep.sleep(1);
       await (scrapeAndAdd());
-      refresh();
-      spotifyApi.resetAccessToken();
-      spotifyApi.resetRefreshToken();
-      spotifyApi.resetCode();
       res.send(data.body);
     } catch (err) {
       console.log("ERROR at getUser:", err);
@@ -149,6 +145,8 @@ const addBulkSongs = async (function(songs) {
     var ids = songs.map(x => await (search(x))).filter(y => y != null).map(x => ("spotify:track:" + x));
     var addedSongs = await (spotifyApi.addTracksToPlaylist(playlist.body.id, ids));
     console.log(addedSongs);
+    spotifyApi.resetAccessToken();
+    spotifyApi.resetRefreshToken();
   } catch (err) {
     console.log("Error in Bulk Add" + err);
   }
