@@ -9,13 +9,7 @@ var sleep = require('sleep');
 var code = null;
 var app = express();
 var port = process.env.PORT;
-
-function isAllowed(){
-  var takeReq = true;
-  function get(){
-   return this.takeReq;
-  }
-}
+var takeReq = true;
 
 var jsdom = require("jsdom");
 const {
@@ -43,8 +37,8 @@ app.get("/start", async (function(req, res) {
   if (code == null)
     res.redirect(authorizeURL);
   else {
+          if(takeReq){
     try {
-      if(takeReq){
       takeReq=false;
       var data = await (spotifyApi.getMe());
       console.log(data.body);
