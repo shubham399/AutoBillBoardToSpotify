@@ -145,10 +145,10 @@ const addBulkSongs = async (function(songs) {
     var ids = songs.map(x => await (search(x))).filter(y => y != null).map(x => ("spotify:track:" + x));
     var addedSongs = await (spotifyApi.addTracksToPlaylist(playlist.body.id, ids));
     console.log(addedSongs);
-    spotifyApi.resetAccessToken();
-    spotifyApi.resetRefreshToken();
-    spotifyApi.setAccessToken(null);
-    spotifyApi.setRefreshToken(null);
+//     spotifyApi.resetAccessToken();
+//     spotifyApi.resetRefreshToken();
+//     spotifyApi.setAccessToken(null);
+//     spotifyApi.setRefreshToken(null);
   } catch (err) {
     console.log("Error in Bulk Add" + err);
   }
