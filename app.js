@@ -143,9 +143,9 @@ const addBulkSongs = async (function(songs) {
       'public': false
     }));
     var ids = songs.map(x => await (search(x))).filter(y => y != null).map(x => ("spotify:track:" + x));
-    console.log("IDS:"+JSON.stringify(ids));
+    console.log("IDS:"+JSON.stringify(ids.slice(0,10)));
     console.log(playlist.body.id);
-    var addedSongs = await (spotifyApi.addTracksToPlaylist(playlist.body.id, ids));
+    var addedSongs = await (spotifyApi.addTracksToPlaylist(playlist.body.id, ids.slice(0,10)));
     console.log(addedSongs);
 //     spotifyApi.resetAccessToken();
 //     spotifyApi.resetRefreshToken();
