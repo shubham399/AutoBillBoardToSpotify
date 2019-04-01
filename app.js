@@ -101,11 +101,13 @@ const scrapeAndAdd = function() {
     console.log('error:', error); // Print the error if one occurred
     if (error == null) {
       const dom = new JSDOM(body);
-      var one = dom.window.document.getElementsByClassName("chart-number-one__title")[0].innerHTML.replace("\n", "").trim()
-      var dms = dom.window.document.getElementsByClassName("chart-list-item__title-text");
-      var songs = [one];
-      for (var i = 0; i < dms.length; i++) {
-        songs.push(dms[i].innerHTML.replace("\n", "").trim())
+      var dms = dom.window.document.getElementsByClassName("chart-list-item");
+      var songs = [];
+      for (dm of dms) {
+        dm = dm.dataset;
+        var title = dm["title"].trim()
+        var artist = dm["artist"].trim()
+        songs.push('track:' + title + ' artist:' + artist)
       }
       addBulkSongs(songs)
     }
