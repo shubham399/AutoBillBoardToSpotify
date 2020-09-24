@@ -3,16 +3,25 @@ var redis = require("redis");
 const client = redis.createClient(redisURL);
 
 const set = function(key, value) {
-  return client.set(key, value, redis.print);
+    return client.set(key, value, redis.print);
 }
-const setex = function (key,value,ttl){
-return client.set(key, value, 'EX', ttl);
+const setex = function(key, value, ttl) {
+    return client.set(key, value, 'EX', ttl);
 }
-const get = function(key, cb) {
-  client.get(key, cb);
+const get = function(key) {
+    return new Promise((resolve, reject) => {
+        client.get(key, (err, data) => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve(data);
+        });
+    });
 }
-const clean = () =>{
-  client.end(true);
+
+const clean = () => {
+    client.end(true);
 }
 
 exports.redis = client;

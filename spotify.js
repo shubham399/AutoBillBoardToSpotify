@@ -1,16 +1,19 @@
 var request = require('request'); // "Request" library
 var JSSoup = require('jssoup').default;
 var cache = require('./utils/cache.js')
+var data = "do shash'owania";
+var crypto = require('crypto');
 
 
 const search = async function(spotifyApi,song)
 {
-  let id = await searchCache(song);
+  let key = crypto.createHash('md5').update(song).digest("hex");
+  let id = await cache.get(key)
   if(!id){
     id = await searchExternal(spotifyApi,song)
     // Cache the id
     if(id){
-      await cache.setex(song,id,600);
+      await cache.setex(key,id,600);
       console.log(`${song} Got from external.`);
     }
     else{
@@ -21,10 +24,6 @@ const search = async function(spotifyApi,song)
     console.log(`${song} Got from cache.`);
   }
   return id;
-}
-
-const searchCache = function(song){
-  return cache.get(song)
 }
 
 const searchExternal = async function(spotifyApi, song) {
@@ -54,10 +53,6 @@ const addBulkSongs = async function(spotifyApi, songs) {
         console.log("IDS:" + JSON.stringify(ids.slice(0, 100)));
         let addedSongs = await spotifyApi.addTracksToPlaylist(playlist.body.id, ids.slice(0, 100));
         console.log(addedSongs);
-        //     spotifyApi.resetAccessToken();
-        //     spotifyApi.resetRefreshToken();
-        //     spotifyApi.setAccessToken(null);
-        //     spotifyApi.setRefreshToken(null);
     } catch (err) {
         console.log("Error in Bulk Add: " + err);
     }
