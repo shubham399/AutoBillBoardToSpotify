@@ -1,17 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('./partials/head'); %>
 
-<div class="container">
+<head>
+  <%- include('./partials/head'); %>
+</head>
 
-  <h3> Welcome <%= name %> </h3>
-  <p> Now you can add Songs to your account by clicking <a href="/add"><button type="button" class="btn btn-success">Add</button></a> </p>
+<body>
+  <%- include('./partials/nav'); %>
+  <div class="container">
+    <% if (added) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      A Playlist have been created and Songs have been added.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <% } %>
+    <div class="card-deck mb-1 text-center">
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header">
+            <h4 class="my-0 font-weight-normal">Top 100 Billboard Songs</h4>
+          </div>
+          <div class="card-body">
+            <a href="/add"><button type="button" class="btn btn-success">Add</button></a>
+          </div>
+        </div>
+    <!-- <p> Now you can add Songs to your account by clicking <a href="/add"><button type="button" class="btn btn-success">Add</button></a> </p> -->
 
+  </div>
 
- <a class="badge badge-danger" href="/logout">Logout</a>
+  <footer class="footer">
+    <div class="container">
+      <%- include('./partials/footer'); %>
+    </div>
+  </footer>
+  <%- include('./partials/scripts'); %>
+</body>
 
-<div>
-<footer>
-    <%- include('./partials/footer'); %>
-</footer>
 </html>

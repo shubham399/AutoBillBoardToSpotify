@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
 <%- include('./partials/head'); %>
+<link href="signin.css" rel="stylesheet">
+</head>
 
-<div class="container-fluid  p-3">
-<p class="center">Login To Add Billboard to your Spotify Playlist</p>
-<form action="login">
-<input type="submit" class="btn btn-success btn-lg btn-block" value="Login With Spotify">
-</form>
-</br>
-<div>
-<footer>
+<body class="text-center">
+<%- include('./partials/nav'); %>
+<form class="form-signin" action="login">
+    <h1 class="h3 mb-3 font-weight-normal">Login To Add Billboard to your Spotify Playlist</h1>
+    <input type="submit" class="btn btn-success btn-lg btn-block" value="Login With Spotify">
+  </form>
+<footer class="footer">
     <%- include('./partials/footer'); %>
 </footer>
+<%- include('./partials/scripts'); %>
+</body>
 </html>

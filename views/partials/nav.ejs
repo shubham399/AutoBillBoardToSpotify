@@ -1,0 +1,13 @@
+<nav class="navbar navbar-light bg-light flex-row-reverse">
+  <% if (locals.name) { %>
+  <form class="form-inline">
+    <div class="input-group">
+      <div class="input-group-prepend navbar-nav ml-auto">
+        <span class="input-group-text" id="basic-addon1">@</span>
+      </div>
+      <input type="text" class="form-control mr-sm-2" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value ="<%= name %>" readonly>
+    </div>
+    <a href="/logout"><button type="button" class="btn btn-danger">Logout</button></a>
+  </form>
+    <% } %>
+</nav>

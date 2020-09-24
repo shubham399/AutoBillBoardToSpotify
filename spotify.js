@@ -77,7 +77,7 @@ const scrapeAndAdd = function(spotifyApi) {
                 let titleSpan = dm.find('span')
                 let title = titleSpan.text.trim()
                 let artist = titleSpan.findNextSibling('span').text.trim()
-                songs.push('track:' + title + ' artist:' + artist)
+                songs.push('track:' +title+' artist:'+artist)
             }
             addBulkSongs(spotifyApi, songs)
         }

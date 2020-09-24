@@ -30,10 +30,11 @@ app.get("/me", async function(req, res) {
         spotifyApi.setAccessToken(req.cookies['access_token']);
         spotifyApi.setRefreshToken(req.cookies['refresh_token']);
         var data = await (spotifyApi.getMe());
-        console.log(data.body);
         res.render("home", {
             name: data.body.display_name,
-            email: data.body.email
+            email: data.body.email,
+            added: req.query.added || false
+
         });
     } catch (e) {
         res.clearCookie('access_token');
@@ -87,9 +88,6 @@ app.get('/callback', function(req, res) {
         redirectUri: process.env.APP_URI + "/callback"
     });
     spotifyApi.authorizationCodeGrant(req.query.code).then(data => {
-        console.log('The token expires in ' + data.body['expires_in']);
-        console.log('The access token is ' + data.body['access_token']);
-        console.log('The refresh token is ' + data.body['refresh_token']);
         res.cookie('access_token', data.body['access_token'], {
             httpOnly: true
         })
@@ -115,6 +113,7 @@ app.all("/", function(req, res) {
             message: 'Hello there!'
         })
 });
+app.use('/styles',express.static('views/styles'))
 app.all('*', function(req, res) {
     res.status(404).send('what???');
 });
