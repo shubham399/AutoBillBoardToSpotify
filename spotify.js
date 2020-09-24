@@ -1,19 +1,41 @@
 var request = require('request'); // "Request" library
-
 var JSSoup = require('jssoup').default;
+var cache = require('./utils/cache.js')
 
-const search = async function(spotifyApi, song) {
-    console.log("Searching id : " + song);
+
+const search = async function(spotifyApi,song)
+{
+  let id = await searchCache(song);
+  if(!id){
+    id = await searchExternal(spotifyApi,song)
+    // Cache the id
+    if(id){
+      await cache.setex(song,id,600);
+      console.log(`${song} Got from external.`);
+    }
+    else{
+      console.log(`Unable to find ${song}`);
+    }
+  }
+  else {
+    console.log(`${song} Got from cache.`);
+  }
+  return id;
+}
+
+const searchCache = function(song){
+  return cache.get(song)
+}
+
+const searchExternal = async function(spotifyApi, song) {
     try {
         var data = await spotifyApi.search(song, ["track"], {
             best_match: true
         });
         var id = data.body.best_match.items[0].id;
-        console.log(song + " id is " + id);
         return id;
 
     } catch (err) {
-        console.log("Error while Searching Song" + err);
         return null;
     }
 }
