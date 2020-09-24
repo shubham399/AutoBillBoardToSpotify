@@ -85,24 +85,7 @@ const scrapeAndAdd = function(spotifyApi) {
     console.log("SCRAPPING ENDED.")
 };
 
-
-function refresh() {
-    try {
-        spotifyApi.refreshAccessToken().then(
-            function(data) {
-                console.log('The access token has been refreshed!');
-                spotifyApi.setAccessToken(data.body['access_token']);
-            },
-            function(err) {
-                console.log('Could not refresh access token', err);
-            }
-
-        );
-    } catch (err) {}
-}
-
 exports.search = search;
 exports.addBulkSongs = addBulkSongs;
 exports.currentLibIds = currentLibIds;
 exports.scrapeAndAdd = scrapeAndAdd;
-exports.refresh = refresh;
