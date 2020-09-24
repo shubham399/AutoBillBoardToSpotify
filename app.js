@@ -1,19 +1,16 @@
-const async = require("asyncawait/async");
-const await = require("asyncawait/await");
 var express = require('express'); // Express web server framework
-var request = require('request'); // "Request" library
+
 var querystring = require('querystring');
 var SpotifyWebApi = require('spotify-web-api-node');
 var state = 'spotify_auth_state';
 var sleep = require('sleep');
 var code = null;
 var app = express();
-var port = process.env.PORT
-
-var jsdom = require("jsdom");
-const {
-  JSDOM
-} = jsdom;
+var port = process.env.PORT || 8080
+let search = require('./spotify').search
+let addBulkSongs = require('./spotify').addBulkSongs
+let scrapeAndAdd = require('./spotify').scrapeAndAdd
+let currentLibIds = require('./spotify').currentLibIds
 
 // app.use(cors())
 var scopes = ["user-library-modify", "user-read-private", "playlist-modify-private", "user-library-read", "user-read-email", "playlist-modify-private"]
@@ -22,15 +19,19 @@ var spotifyApi = new SpotifyWebApi({
   clientSecret: process.env.CLIENT_SECRET,
   redirectUri: process.env.APP_URI + "/callback"
 });
-app.get("/me", async (function(req, res) {
+
+console.log( process.env.CLIENT_ID);
+
+app.get("/me", async function(req, res) {
   try {
     var data = await (spotifyApi.getMe());
     res.send(data);
   } catch (e) {
     res.send(e);
   }
-}));
-app.get("/start", async (function(req, res) {
+});
+
+app.get("/start", async function(req, res) {
   console.log("Start API called.");
   var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
   if (code == null)
@@ -40,14 +41,14 @@ app.get("/start", async (function(req, res) {
       var data = await (spotifyApi.getMe());
       console.log(data.body);
       sleep.sleep(1);
-      await (scrapeAndAdd());
+      await (scrapeAndAdd(spotifyApi));
       res.send(data.body);
     } catch (err) {
       console.log("ERROR at getUser:", err);
       res.redirect(authorizeURL);
     }
   }
-}))
+})
 
 
 // console.log(authorizeURL);
@@ -73,106 +74,9 @@ app.all("/", function(req, res) {
   res.send("AutoBillBoard");
 });
 app.all('*', function(req, res) {
-  res.send('what???', 404);
+  res.status(404).send('what???');
 });
 
-
-console.log('Listening on ' + port);
-app.listen(port);
-
-function refresh() {
-  try {
-    spotifyApi.refreshAccessToken().then(
-      function(data) {
-        console.log('The access token has been refreshed!');
-        spotifyApi.setAccessToken(data.body['access_token']);
-      },
-      function(err) {
-        console.log('Could not refresh access token', err);
-      }
-
-    );
-  } catch (err) {}
-}
-
-const scrapeAndAdd = function() {
-  console.log("SCRAPPING Started.")
-  request('https://www.billboard.com/charts/hot-100', function(error, response, body) {
-    console.log('error:', error); // Print the error if one occurred
-    if (error == null) {
-      const dom = new JSDOM(body);
-      var dms = dom.window.document.getElementsByClassName("chart-list-item");
-      var songs = [];
-      for (dm of dms) {
-        dm = dm.dataset;
-        var title = dm["title"].trim()
-        var artist = dm["artist"].trim()
-        songs.push('track:' + title + ' artist:' + artist)
-      }
-      addBulkSongs(songs)
-    }
-  });
-  console.log("SCRAPPING ENDED.")
-};
-
-const currentLibIds = async (function() {
-  var list = await (spotifyApi.getMySavedTracks({
-    limit: 50
-  }));
-  var ids = list.body.items.map(x => x.track.id);
-  var total = list.body.total;
-  console.log("TOTAL:" + total);
-
-  for (var i = 50; i < (total + 50); i += 50) {
-    var l = await (spotifyApi.getMySavedTracks({
-      limit: 50,
-      offset: i
-    }));
-    var nIds = l.body.items.map(x => x.track.id);
-    ids = ids.concat(nIds);
-  }
-
-  return ids;
-
-})
-
-const addBulkSongs = async (function(songs) {
-  try {
-    var date = new Date().toDateString();
-    var data = await (spotifyApi.getMe());
-    var id = data.body.id;
-    var playlist = await (spotifyApi.createPlaylist(id, "Billboard TOP 100 on " + date, {
-      'public': false
-    }));
-    var ids = songs.map(x => await (search(x))).filter(y => y != null).map(x => ("spotify:track:" + x));
-    console.log("IDS:"+JSON.stringify(ids.slice(0,100)));
-    console.log(playlist.body.id);
-    var addedSongs = await (spotifyApi.addTracksToPlaylist(playlist.body.id, ids.slice(0,100)));
-    console.log(addedSongs);
-//     spotifyApi.resetAccessToken();
-//     spotifyApi.resetRefreshToken();
-//     spotifyApi.setAccessToken(null);
-//     spotifyApi.setRefreshToken(null);
-  } catch (err) {
-    console.log("Error in Bulk Add: " + err);
-  }
-});
-
-
-const search = async (function(song) {
-  console.log("Searching id : " + song);
-  try {
-    var data = await (spotifyApi.search(song, ["track"], {
-      best_match: true
-    }));
-    var id = data.body.best_match.items[0].id;
-    console.log(song + " id is " + id);
-    return id;
-
-  } catch (err) {
-    console.log("Error while Searching Song" + err);
-    return null;
-  }
-
-
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
 })
