@@ -50,9 +50,7 @@ const addBulkSongs = async function(spotifyApi, songs) {
         });
         var idsF = await Promise.all(songs.map(x => search(spotifyApi, x)))
         let ids = idsF.filter(y => y != null).map(x => ("spotify:track:" + x));
-        console.log("IDS:" + JSON.stringify(ids.slice(0, 100)));
         let addedSongs = await spotifyApi.addTracksToPlaylist(playlist.body.id, ids.slice(0, 100));
-        console.log(addedSongs);
     } catch (err) {
         console.log("Error in Bulk Add: " + err);
     }
@@ -80,7 +78,6 @@ const currentLibIds = async function(spotifyApi) {
 }
 
 const scrapeAndAdd = function(spotifyApi) {
-    console.log("SCRAPPING Started.")
     request('https://www.billboard.com/charts/hot-100', function(error, response, body) {
         console.log('error:', error); // Print the error if one occurred
         if (error == null) {
@@ -99,7 +96,6 @@ const scrapeAndAdd = function(spotifyApi) {
             addBulkSongs(spotifyApi, songs)
         }
     });
-    console.log("SCRAPPING ENDED.")
 };
 
 exports.search = search;
