@@ -20,6 +20,7 @@
         "express": "^4.17.1",
         "jssoup": "0.0.12",
         "querystring": "~0.2.0",
+        "redis": "^3.0.2",
         "request": "~2.83.0",
         "sleep": "^5.2.3",
         "spotify-web-api-node": "^4.0.0"
