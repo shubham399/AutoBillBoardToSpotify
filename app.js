@@ -4,7 +4,6 @@ var querystring = require('querystring');
 var SpotifyWebApi = require('spotify-web-api-node');
 var state = 'spotify_auth_state';
 var sleep = require('sleep');
-var code = null;
 var app = express();
 var port = process.env.PORT || 8080
 let search = require('./spotify').search
@@ -12,50 +11,69 @@ let addBulkSongs = require('./spotify').addBulkSongs
 let scrapeAndAdd = require('./spotify').scrapeAndAdd
 let currentLibIds = require('./spotify').currentLibIds
 
+
+app.set('views', './views') // specify the views directory
+app.set('view engine', 'ejs') // register the template engine
+
+
 // app.use(cors())
 app.use(cookieParser())
 var scopes = ["user-library-modify", "user-read-private", "playlist-modify-private", "user-library-read", "user-read-email", "playlist-modify-private"]
 
 app.get("/me", async function(req, res) {
     try {
-      let spotifyApi = new SpotifyWebApi({
-          clientId: process.env.CLIENT_ID,
-          clientSecret: process.env.CLIENT_SECRET,
-          redirectUri: process.env.APP_URI + "/callback"
-      });
-      spotifyApi.setAccessToken(req.cookies['access_token']);
-      spotifyApi.setRefreshToken(req.cookies['refresh_token']);
+        let spotifyApi = new SpotifyWebApi({
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            redirectUri: process.env.APP_URI + "/callback"
+        });
+        spotifyApi.setAccessToken(req.cookies['access_token']);
+        spotifyApi.setRefreshToken(req.cookies['refresh_token']);
         var data = await (spotifyApi.getMe());
-        res.send(data);
+        console.log(data.body);
+        res.render("home", {
+            name: data.body.display_name,
+            email: data.body.email
+        });
     } catch (e) {
-        res.send(e);
+        res.clearCookie('access_token');
+        res.clearCookie('refresh_token');
+        res.redirect('/');
+    }
+});
+app.get("/add", async function(req, res) {
+    try {
+        let spotifyApi = new SpotifyWebApi({
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            redirectUri: process.env.APP_URI + "/callback"
+        });
+        spotifyApi.setAccessToken(req.cookies['access_token']);
+        spotifyApi.setRefreshToken(req.cookies['refresh_token']);
+
+        scrapeAndAdd(spotifyApi)
+        res.redirect("/me?added=true")
+    } catch (e) {
+        res.clearCookie('access_token');
+        res.clearCookie('refresh_token');
+        res.redirect('/');
     }
 });
 
-app.get("/start", async function(req, res) {
-    console.log("Start API called.");
+app.all("/login", async function(req, res) {
+    console.log("Login Started");
     let spotifyApi = new SpotifyWebApi({
         clientId: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
         redirectUri: process.env.APP_URI + "/callback"
     });
-    spotifyApi.setAccessToken(req.cookies['access_token']);
-    spotifyApi.setRefreshToken(req.cookies['refresh_token']);
-    var authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
-    if (code == null)
-        res.redirect(authorizeURL);
-    else {
-        try {
-            var data = await (spotifyApi.getMe());
-            console.log(data.body);
-            sleep.sleep(1);
-            await (scrapeAndAdd(spotifyApi));
-            res.send(data.body);
-        } catch (err) {
-            console.log("ERROR at getUser:", err);
-            res.redirect(authorizeURL);
-        }
-    }
+    let authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+    res.redirect(authorizeURL);
+})
+app.get("/logout", async function(req, res) {
+    res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
+    res.redirect("/")
 })
 
 
@@ -63,7 +81,6 @@ app.get("/start", async function(req, res) {
 
 app.get('/callback', function(req, res) {
     console.log("Got Callback.")
-    code = req.query.code || null;
     let spotifyApi = new SpotifyWebApi({
         clientId: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
@@ -82,7 +99,7 @@ app.get('/callback', function(req, res) {
         res.cookie('expire_in', data.body['expires_in'], {
             httpOnly: true
         })
-        res.redirect("/start");
+        res.redirect("/me");
     }).catch(err => {
         console.log(err);
         res.send("Something Went Wrong.")
@@ -90,7 +107,13 @@ app.get('/callback', function(req, res) {
 });
 
 app.all("/", function(req, res) {
-    res.send("AutoBillBoard");
+    if (req.cookies['access_token']) {
+        res.redirect("/me")
+    } else
+        res.render('index', {
+            title: 'Hey',
+            message: 'Hello there!'
+        })
 });
 app.all('*', function(req, res) {
     res.status(404).send('what???');
