@@ -1,24 +1,25 @@
-var express = require('express'); // Express web server framework
+let express = require('express'); // Express web server framework
 let cookieParser = require('cookie-parser')
-var querystring = require('querystring');
-var SpotifyWebApi = require('spotify-web-api-node');
-var state = 'spotify_auth_state';
-var sleep = require('sleep');
-var app = express();
-var port = process.env.PORT || 8080
+let querystring = require('querystring');
+let SpotifyWebApi = require('spotify-web-api-node');
+let state = 'spotify_auth_state';
+let sleep = require('sleep');
+let app = express();
+let port = process.env.PORT || 8080
 let search = require('./spotify').search
 let addBulkSongs = require('./spotify').addBulkSongs
 let scrapeAndAdd = require('./spotify').scrapeAndAdd
 let currentLibIds = require('./spotify').currentLibIds
-
+let flash = require('connect-flash');
+let session = require('express-session')
 
 app.set('views', './views') // specify the views directory
 app.set('view engine', 'ejs') // register the template engine
 
-
-// app.use(cors())
-app.use(cookieParser())
-var scopes = ["user-library-modify", "user-read-private", "playlist-modify-private", "user-library-read", "user-read-email", "playlist-modify-private"]
+app.use(cookieParser('haldsuuuuuuuuuuuuuuuuuuuuuuugiasiugdsiuggfiugfdiug'));
+app.use(session({ cookie: { maxAge: 60000 }}));
+app.use(flash());
+let scopes = ["user-library-modify", "user-read-private", "playlist-modify-private", "user-library-read", "user-read-email", "playlist-modify-private"]
 
 app.get("/me", async function(req, res) {
     try {
@@ -29,16 +30,20 @@ app.get("/me", async function(req, res) {
         });
         spotifyApi.setAccessToken(req.cookies['access_token']);
         spotifyApi.setRefreshToken(req.cookies['refresh_token']);
-        var data = await (spotifyApi.getMe());
+        let data = await (spotifyApi.getMe());
+        let added = req.flash('added')[0] || false
         res.render("home", {
             name: data.body.display_name,
             email: data.body.email,
-            added: req.query.added || false
+            added
 
         });
+
     } catch (e) {
+        console.error("ERROR:",e.message);
         res.clearCookie('access_token');
         res.clearCookie('refresh_token');
+        // req.flash("error",e.message)
         res.redirect('/');
     }
 });
@@ -52,8 +57,9 @@ app.get("/add", async function(req, res) {
         spotifyApi.setAccessToken(req.cookies['access_token']);
         spotifyApi.setRefreshToken(req.cookies['refresh_token']);
 
-        scrapeAndAdd(spotifyApi)
-        res.redirect("/me?added=true")
+        // scrapeAndAdd(spotifyApi)
+        req.flash('added',true)
+        res.redirect("/me")
     } catch (e) {
         res.clearCookie('access_token');
         res.clearCookie('refresh_token');
