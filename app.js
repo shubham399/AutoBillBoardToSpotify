@@ -32,18 +32,20 @@ app.get("/me", async function(req, res) {
         spotifyApi.setRefreshToken(req.cookies['refresh_token']);
         let data = await (spotifyApi.getMe());
         let added = req.flash('added')[0] || false
+        let errorMessage = req.flash('error')[0]
         res.render("home", {
             name: data.body.display_name,
             email: data.body.email,
-            added
+            added,
+            error: errorMessage
 
         });
 
     } catch (e) {
         console.error("ERROR:",e.message);
+        res.flash('error',e.message)
         res.clearCookie('access_token');
         res.clearCookie('refresh_token');
-        // req.flash("error",e.message)
         res.redirect('/');
     }
 });
@@ -56,13 +58,13 @@ app.get("/add", async function(req, res) {
         });
         spotifyApi.setAccessToken(req.cookies['access_token']);
         spotifyApi.setRefreshToken(req.cookies['refresh_token']);
-
-        // scrapeAndAdd(spotifyApi)
+        scrapeAndAdd(spotifyApi)
         req.flash('added',true)
         res.redirect("/me")
     } catch (e) {
         res.clearCookie('access_token');
         res.clearCookie('refresh_token');
+        req.flash('error',e.message)
         res.redirect('/');
     }
 });
@@ -105,8 +107,9 @@ app.get('/callback', function(req, res) {
         })
         res.redirect("/me");
     }).catch(err => {
-        console.log(err);
-        res.send("Something Went Wrong.")
+        console.error(err.message);
+        req.flash('error',err.message)
+        res.redirect("/")
     })
 });
 
@@ -116,7 +119,8 @@ app.all("/", function(req, res) {
     } else
         res.render('index', {
             title: 'Hey',
-            message: 'Hello there!'
+            message: 'Hello there!',
+            error: req.flash('error')[0]
         })
 });
 app.use('/styles',express.static('views/styles'))
