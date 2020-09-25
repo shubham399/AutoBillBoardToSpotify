@@ -5,7 +5,7 @@
   <%- include('./partials/head'); %>
 </head>
 
-<body>
+<body class="text-center">
   <%- include('./partials/nav'); %>
   <div class="container">
     <% if (added) { %>
@@ -17,22 +17,21 @@
     </div>
     <% } %>
     <div class="card-deck mb-1 text-center">
-        <div class="card mb-4 shadow-sm">
-          <div class="card-header">
-            <h4 class="my-0 font-weight-normal">Top 100 Billboard Songs</h4>
-          </div>
-          <div class="card-body">
-            <a href="/add"><button type="button" class="btn btn-success">Add</button></a>
-          </div>
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+          <h4 class="my-0 font-weight-normal">Top 100 Billboard Songs</h4>
         </div>
+        <div class="card-body">
+          <a href="/add"><button type="button" class="btn btn-success">Add</button></a>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <footer class="footer">
-    <div class="container">
+    <footer class="footer">
       <%- include('./partials/footer'); %>
-    </div>
-  </footer>
-  <%- include('./partials/scripts'); %>
+    </footer>
+    <%- include('./partials/scripts'); %>
 </body>
 
 </html>
