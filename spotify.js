@@ -3,7 +3,7 @@ var JSSoup = require('jssoup').default;
 var cache = require('./utils/cache.js')
 var data = "do shash'owania";
 var crypto = require('crypto');
-
+let keyTTL = parseInt(process.env.KEY_TTL) || 604800; // Keep Song for 7 days in redis.
 
 const search = async function(spotifyApi,song)
 {
@@ -13,7 +13,7 @@ const search = async function(spotifyApi,song)
     id = await searchExternal(spotifyApi,song)
     // Cache the id
     if(id){
-      await cache.setex(key,id,600);
+      await cache.setex(key,id,keyTTL);
       console.log(`${song} Got from external.`);
     }
     else{
