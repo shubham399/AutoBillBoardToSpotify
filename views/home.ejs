@@ -30,7 +30,7 @@
       </div>
 
         <% playlists.forEach(function(playlist){ %>
-        <%- include('./partials/cards', {header: playlist.name,body: playlist.songs}); %>
+        <%- include('./partials/cards', {header: playlist.name,body: playlist.songs + " Songs",link:playlist.id}); %>
         <% }); %>
       </div>
     </div>
