@@ -7,6 +7,9 @@
       </div>
       <input type="text" class="form-control mr-sm-2" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value ="<%= name %>" readonly>
     </div>
+    <% if(locals.back) { %>
+      <a href="/me"><button type="button" class="btn btn-outline-primary">Home</button></a>
+    <% }%>
     <a href="/logout"><button type="button" class="btn btn-outline-danger">Logout</button></a>
   </form>
     <% } %>

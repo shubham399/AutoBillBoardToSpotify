@@ -55,6 +55,40 @@ app.get("/me", async function(req, res) {
         res.redirect('/');
     }
 });
+
+app.get("/playlist/:id", async function(req, res) {
+    try {
+        let spotifyApi = new SpotifyWebApi({
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            redirectUri: process.env.APP_URI + "/callback"
+        });
+        let playlistId = req.params.id
+        spotifyApi.setAccessToken(req.cookies['access_token']);
+        spotifyApi.setRefreshToken(req.cookies['refresh_token']);
+        let data = await (spotifyApi.getMe());
+        let added = req.flash('added')[0] || false
+        let errorMessage = req.flash('error')[0]
+        let tracks = await (playlists.getPlaylist(spotifyApi,playlistId))
+        res.cookie('display_name', data.body.display_name, {
+            httpOnly: true
+        })
+        // let playlists =
+        res.render("playlist", {
+            name: data.body.display_name,
+            error: errorMessage,
+            tracks
+        });
+
+    } catch (e) {
+        console.error("ERROR:",e.message);
+        res.flash('error',e.message)
+        res.clearCookie('access_token');
+        res.clearCookie('refresh_token');
+        res.redirect('/');
+    }
+});
+
 app.get("/add", async function(req, res) {
     try {
         let spotifyApi = new SpotifyWebApi({
