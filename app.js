@@ -7,6 +7,7 @@ let sleep = require('sleep');
 let app = express();
 let port = process.env.PORT || 8080
 let search = require('./spotify').search
+let playlists = require("./Spotify/playlist")
 let addBulkSongs = require('./spotify').addBulkSongs
 let scrapeAndAdd = require('./spotify').scrapeAndAdd
 let currentLibIds = require('./spotify').currentLibIds
@@ -19,7 +20,7 @@ app.set('view engine', 'ejs') // register the template engine
 app.use(cookieParser('haldsuuuuuuuuuuuuuuuuuuuuuuugiasiugdsiuggfiugfdiug'));
 app.use(session({ cookie: { maxAge: 60000 }}));
 app.use(flash());
-let scopes = ["user-library-modify", "user-read-private", "playlist-modify-private", "user-library-read", "user-read-email", "playlist-modify-private"]
+let scopes = ["user-library-modify", "user-read-private","playlist-read-private","playlist-read-collaborative", "playlist-modify-private", "user-library-read", "user-read-email", "playlist-modify-private"]
 
 app.get("/me", async function(req, res) {
     try {
@@ -33,12 +34,17 @@ app.get("/me", async function(req, res) {
         let data = await (spotifyApi.getMe());
         let added = req.flash('added')[0] || false
         let errorMessage = req.flash('error')[0]
+        let playlist = await (playlists.getPlaylists(spotifyApi))
+        res.cookie('display_name', data.body.display_name, {
+            httpOnly: true
+        })
+        // let playlists =
         res.render("home", {
             name: data.body.display_name,
             email: data.body.email,
             added,
-            error: errorMessage
-
+            error: errorMessage,
+            playlists:playlist
         });
 
     } catch (e) {
@@ -123,6 +129,7 @@ app.all("/", function(req, res) {
             error: req.flash('error')[0]
         })
 });
+
 app.use('/styles',express.static('views/styles'))
 app.all('*', function(req, res) {
     res.status(404).send('what???');

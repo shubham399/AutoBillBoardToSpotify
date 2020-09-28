@@ -11,23 +11,30 @@
     <div class="center-block">
       <!-- <div class="container mx-auto"> -->
       <%- include('./partials/error'); %>
-        <% if (added) { %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          A Playlist have been created and Songs have been added.
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+      <% if (added) { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        A Playlist have been created and Songs have been added.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <% } %>
+      <div class="card-columns mb-2">
+      <div class="card mb-4 box-shadow">
+        <div class="card-header">
+          <h4 class="my-0 font-weight-normal">Top 100 Billboard Songs</h4>
         </div>
-        <% } %>
-        <div class="card shadow-sm p-auto m-auto w-75 h-100">
-          <div class="card-header">
-            <h4 class="my-0 font-weight-normal">Top 100 Billboard Songs</h4>
-          </div>
-          <div class="card-body">
-            <a href="/add"><button type="button" class="btn btn-outline-success">Add</button></a>
-          </div>
+        <div class="card-body">
+          <a href="/add"><button type="button" class="btn btn-outline-success">Add</button></a>
         </div>
-      <!-- </div> -->
+      </div>
+
+        <% playlists.forEach(function(playlist){ %>
+        <%- include('./partials/cards', {header: playlist.name,body: playlist.songs}); %>
+        <% }); %>
+      </div>
+    </div>
+    <div class="card-deck mb-3 text-center">
     </div>
   </div>
 
