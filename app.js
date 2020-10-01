@@ -6,11 +6,11 @@ let state = 'spotify_auth_state';
 let sleep = require('sleep');
 let app = express();
 let port = process.env.PORT || 8080
-let search = require('./spotify').search
+let search = require('./Spotify/spotify').search
 let playlists = require("./Spotify/playlist")
-let addBulkSongs = require('./spotify').addBulkSongs
-let scrapeAndAdd = require('./spotify').scrapeAndAdd
-let currentLibIds = require('./spotify').currentLibIds
+let addBulkSongs = require('./Spotify/spotify').addBulkSongs
+let scrapeAndAdd = require('./Spotify/spotify').scrapeAndAdd
+let currentLibIds = require('./Spotify/spotify').currentLibIds
 let flash = require('connect-flash');
 let session = require('express-session')
 
